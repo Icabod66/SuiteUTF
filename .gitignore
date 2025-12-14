@@ -27,6 +27,7 @@ Makefile
 *.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
+x64/
 
 # Xcode
 *.xcodeproj/
