@@ -37,6 +37,14 @@ self-contained for performance and correctness reasons.
       perform UTF encoding or decoding.
 
   - utf/
+    - choosing_a_utf_library.md  
+      Guidance for selecting an appropriate UTF or Unicode library based on
+      encoding, diagnostics, and policy requirements.
+      
+    - when_to_use_libutf.md  
+      Situations where LibUTF is a good fit, and cases where other UTF libraries
+      may be more appropriate.
+      
     - std_overview.md  
       Strict, standards-compliant UTF handling. This is the recommended entry
       point for most users working with encoded text.
