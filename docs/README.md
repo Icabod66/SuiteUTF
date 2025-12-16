@@ -82,6 +82,10 @@ self-contained for performance and correctness reasons.
     - text_hash.md  
       Standalone CCITT-16 based text hashing utilities.
 
+  - comparisons/  
+    - tinyutf8_comparison.md  
+      UTF-8 policy and diagnostic differences between tinyutf8 and LibUTF.
+
 ---
 
 ## How to approach the documentation

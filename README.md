@@ -30,6 +30,9 @@ LibUTF is intentionally conservative in scope and is designed to integrate
 cleanly into larger systems that already impose their own architectural or policy
 constraints.
 
+Diagnostic returns are explicity marked [[nodiscard]].
+If callers discard them, they have opted out of correctness guarantees.
+
 ---
 
 ## Design Principles
