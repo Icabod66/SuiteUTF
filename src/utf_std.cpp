@@ -227,10 +227,13 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
     {
         uint8_t byte = buffer[0];
         bytes = 1;
-        unicode = (0x80000000u + byte);
+        unicode = byte;
         if (static_cast<uint8_t>(byte + 8) <= 0xc7u)
         {   //  1 byte (7 bits: 0x00-0x7f) or unexpected continuation byte (0x80-0xbf) or illegal leading byte (0xf8-0xff)
-            return byte <= 0x7fu;
+            if (byte <= 0x7fu)
+            {
+                return true;
+            }
         }
         else if (byte <= 0xdfu)
         {   //  2 bytes (11 bits: 0xc0-0xdf)
@@ -301,6 +304,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
                 }
             }
         }
+        unicode |= 0x80000000u;
     }
     return false;
 }
@@ -356,7 +360,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
         else
         {   //  4 bytes (21 bits)
             if (size >= 4)
-            {   //  buffer overflow
+            {
                 buffer[0] = (static_cast<uint8_t>(unicode >> 18) | 0xf0u);
                 buffer[1] = ((static_cast<uint8_t>(unicode >> 12) & 0x3fu) | 0x80u);
                 buffer[2] = ((static_cast<uint8_t>(unicode >> 6) & 0x3fu) | 0x80u);
