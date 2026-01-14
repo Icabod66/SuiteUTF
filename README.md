@@ -1,9 +1,9 @@
 # LibUTF
 
 LibUTF is a compact suite of UTF encoders and decoders with supporting
-utilities, spanning strict standards compliance, legacy encodings,
-permissive and custom behaviours. It supports both fail-fast operation
-and rich diagnostics for analysing, debugging, and correcting invalid text.
+utilities, covering strict compliance, legacy encodings, permissive and
+custom encodings. It supports both fail-fast operation and rich
+diagnostics for analysing, debugging and correcting invalid encodings.
 
 The library is designed with a strong emphasis on correctness, deterministic
 behaviour, and long-term maintainability, making it suitable for use in both
