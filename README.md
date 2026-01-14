@@ -1,15 +1,21 @@
 # LibUTF
 
-LibUTF is a compact, general-purpose Unicode/UTF handling library developed with
-an emphasis on correctness, determinism, and long-term maintainability.
+LibUTF is a compact suite of Unicode and UTF encoders and decoders with support
+for strict standards compliance, permissive and custom behaviours, and legacy
+encodings. It offers both simple fail-fast operation and rich diagnostic modes
+for analysing, debugging, and correcting invalid text.
+
+The library is designed with a strong emphasis on correctness, deterministic
+behaviour, and long-term maintainability, making it suitable for use in both
+runtime and tooling contexts.
 
 The project originated between 2010 and 2016 as part of a larger game-engine
-architecture and was revisited and modernised between 2024 and 2025. The current
+architecture and was revisited and modernised between 2024 and 2025. Current
 work focuses on documentation, structural clarity, and consolidation of
 long-standing design decisions.
 
-LibUTF is provided as a reference-quality implementation rather than a
-full-spectrum encoding solution.
+LibUTF is provided as a reference-quality implementation and is not intended to
+be a full-spectrum Unicode or internationalisation solution.
 
 ---
 
@@ -27,11 +33,11 @@ normalisation, or locale-aware processing), a different class of library is
 likely more appropriate.
 
 LibUTF is intentionally conservative in scope and is designed to integrate
-cleanly into larger systems that already impose their own architectural or policy
-constraints.
+cleanly into larger systems that already impose their own architectural or
+policy constraints.
 
-Diagnostic returns are explicity marked [[nodiscard]].
-If callers discard them, they have opted out of correctness guarantees.
+Diagnostic return values are explicitly marked `[[nodiscard]]`. Discarding them
+constitutes an explicit opt-out from correctness guarantees.
 
 ---
 
@@ -75,13 +81,13 @@ Depends on `unicode_type.h`.
 
 The `.cpp` file also depends on `unicode_utilities.h`.
 
-Provides lightweight, low-level handling of **well-formed, standards-compliant**
+Provides lightweight handling of **well-formed, standards-compliant**
 UTF-encoded byte streams, including:
 
 - identification of UTF encoding forms
 - basic error detection
 
-Use `utf_std` when you require standard UTF processing and validation.
+Use `utf_std` when you require strict, standard UTF processing and validation.
 
 ---
 
@@ -95,8 +101,8 @@ Provides lower-level manipulation of UTF-encoded byte streams, including support
 for non-standard or non-conforming encodings and more detailed parsing and
 writing analysis.
 
-Use `utf_toolkit` only when you know that you need to create, analyse, or process
-non-standard UTF encodings.
+Use `utf_toolkit` only when you need to create, analyse, or process non-standard
+UTF encodings.
 
 ---
 
@@ -130,7 +136,7 @@ Provides utility functionality, including:
 
 Depends on `unicode_type.h`.
 
-Provides identifiers and helper functions for identifying UTF and non-UTF encoded
+Provides identifiers and helper functions for detecting UTF and non-UTF encoded
 byte streams. Unless you are extending the library to support additional
 encodings, most users will not need to interact with this header directly.
 
@@ -156,8 +162,8 @@ The implementation is intentionally simple and has no external dependencies.
 
 ## Project Status
 
-LibUTF is published to document a mature internal component and make it available
-for inspection and reuse.
+LibUTF is published to document a mature internal component and to make it
+available for inspection and reuse.
 
 While the codebase is actively maintained, the project should not be interpreted
 as a consumer-facing product or as a commitment to ongoing feature expansion.
@@ -177,7 +183,8 @@ modernisation, correctness, structural refinement, and documentation.
 Design, implementation, and documentation are authored by the same individual.
 Tool-assisted review, drafting, and coordination support were provided during the
 modernisation phase using **ChatGPT** and **ChatGPT Codex**. All final technical
-decisions, design judgements, policies and stylistic choices were made by the author.
+decisions, design judgements, policies, and stylistic choices were made by the
+author.
 
 None of the code in this library was written by ChatGPT or any other AI.
 

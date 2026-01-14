@@ -59,7 +59,7 @@ In this layer, unicode_t serves two purposes:
 - Carrying error information when a decode or encode operation fails.
 
 This dual use is a deliberate design choice in utf_std and does not apply to
-the Unicode basics layer.
+the utf_toolkit layer.
 
 #### Unicode sentinel error values
 
