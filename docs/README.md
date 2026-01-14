@@ -72,6 +72,10 @@ self-contained for performance and correctness reasons.
     - wchar_t_guidance.md  
       Guidance on handling wchar_t data when using LibUTF.
 
+    - rune_handling.md  
+      How LibUTF handles Unicode scalar values (runes) during encoding and
+      decoding, including strict and toolkit behavior.
+
     - utf_helpers.md  
       Small helper predicates and utility functions used internally and by
       advanced users.

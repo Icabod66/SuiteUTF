@@ -121,6 +121,87 @@ out-of-range offsets, or misalignment.
 These conditions typically indicate a contract or usage error rather than a
 content or encoding issue, and are often handled separately from other failures.
 
+## Rune validity queries
+
+`cp_errors` provides helper queries that allow callers to determine whether a
+decoded Unicode value is a valid rune, and whether that rune was produced using
+a strictly Unicode-compliant encoding form.
+
+These queries encapsulate both error-state and warning-state interpretation and
+should be preferred over manual flag inspection when reasoning about Unicode
+validity.
+
+---
+
+### is_rune_value()
+
+Returns true if the decoded value represents a valid Unicode scalar value (a rune).
+
+This function returns false if any error state is present, including failure
+states. In all such cases, the decoded value must be treated as invalid Unicode
+and not a rune.
+
+When this function returns true:
+
+- The decoded value lies within the Unicode scalar value range.
+- The value is not a surrogate code point.
+- No error-class conditions are present.
+- A limited subset of informational warnings may be present, provided they are
+  compatible with rune validity.
+
+This function does not imply that the encoding form was strictly
+Unicode-compliant. It indicates only that the resulting value itself is a
+valid rune.
+
+---
+
+### is_strict_rune(UTF_SUB_TYPE utfSubType)
+
+Returns true if the decoded value is a valid Unicode scalar value and the
+encoding used to produce it is strictly Unicode-compliant for the specified
+UTF sub-type.
+
+This function returns false if any error state is present, including
+failure states.
+
+When this function returns true:
+
+- The decoded value is a valid rune.
+- The encoding obeys all Unicode rules applicable to the given UTF sub-type.
+- Only informational warnings compatible with strict Unicode compliance may
+  be present.
+
+The validity guarantees provided by this function are equivalent to those of a
+successful decode in the standard UTF layer.
+
+---
+
+### Relationship between the queries
+
+- is_strict_rune() implies is_rune_value()
+- is_rune_value() does not imply is_strict_rune()
+
+A decoded value may be rune-valid while originating from a non-canonical,
+legacy, or otherwise non-strict encoding form.
+
+---
+
+### Interaction with error and warning states
+
+Both is_rune_value() and is_strict_rune() treat all error states, including
+failed() conditions, as invalid Unicode. In such cases, the decoded value must
+not be interpreted as a rune.
+
+A restricted subset of informational warnings may be present while still
+allowing rune validity. Which warnings are permitted depends on the selected
+UTF sub-type and its strictness rules.
+
+Callers should not infer encoding round-trip safety or encoder support from
+is_rune_value() alone.
+
+Refer to docs/utf/variants_utf_sub_type.md for the strictness and warning
+interpretation rules associated with each UTF sub-type.
+
 ## Replacement-character guidance
 
 `use_replacement_character()` provides a focused policy hint for decoders. It
