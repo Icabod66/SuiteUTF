@@ -1,4 +1,4 @@
-# File: docs/utf/when_to_use_libutf.md
+# File: docs/utf/when_to_use_suite__utf.md
 
 ## When SuiteUTF is a good fit
 
