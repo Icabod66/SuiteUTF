@@ -3,8 +3,8 @@
 //  License: MIT (see LICENSE file in repository root)
 //
 //  SuiteUTF
-//  Original design 2010–2016; maintained and extended 2024–2025.
-//  Copyright (c) 2010–2025 Ritchie Brannan.
+//  Original design 2010-2016; maintained and extended 2024-2025.
+//  Copyright (c) 2010-2025 Ritchie Brannan.
 //  MIT License. See LICENSE.txt. Project history: docs/History.md.
 //
 //  File:   unicode_classification.cpp
@@ -48,7 +48,7 @@ bool isNonCharacter(const unicode_t unicode) noexcept
 
 //! determine if a unicode code-point is a combining character
 bool isCombining(const unicode_t unicode) noexcept
-{   //  U+0300–036F, 1AB0–1AFF, 1DC0–1DFF, 20D0–20FF, FE20–FE2F
+{   //  U+0300-036F, 1AB0-1AFF, 1DC0-1DFF, 20D0-20FF, FE20-FE2F
 	return (unicode >= 0x0300u) && ((unicode <= 0x036fu) || (((unicode >= 0x1ab0u) && (unicode <= 0x20ffu)) && ((unicode <= 0x1affu) || (unicode >= 0x20d0u) || ((unicode & 0xffffffc0u) == 0x1dc0u))) || ((unicode & 0xfffffff0u) == 0xfe20u));
 }
 

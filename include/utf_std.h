@@ -3,8 +3,8 @@
 //  License: MIT (see LICENSE file in repository root)
 //
 //  SuiteUTF
-//  Original design 2010–2016; maintained and extended 2024–2025.
-//  Copyright (c) 2010–2025 Ritchie Brannan.
+//  Original design 2010-2016; maintained and extended 2024-2025.
+//  Copyright (c) 2010-2025 Ritchie Brannan.
 //  MIT License. See LICENSE.txt. Project history: docs/History.md.
 //
 //  File:   utf_std.h

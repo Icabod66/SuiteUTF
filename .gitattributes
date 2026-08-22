@@ -1,2 +1,5 @@
 # Auto-detect text files, normalize them in Git, and keep working-tree files as LF.
 * text=auto eol=lf
+
+# Preserve byte-exact encoding fixtures without line-ending normalization.
+/test/fixtures/** -text !eol
