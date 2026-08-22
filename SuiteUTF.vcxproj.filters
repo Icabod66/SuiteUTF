@@ -44,9 +44,6 @@
     <Filter Include="docs\comparisons">
       <UniqueIdentifier>{6d21ba64-dec0-43c3-a8f3-026c8f5074cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\main">
-      <UniqueIdentifier>{cf9a4ee6-1af6-4ce9-8544-14cdce120f8f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\reference\unicode_api.md">
@@ -167,9 +164,6 @@
     </ClCompile>
     <ClCompile Include="src\utf_toolkit.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\suite_utf.cpp">
-      <Filter>src\main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

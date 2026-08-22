@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src"><UniqueIdentifier>{9ccf561d-6809-44ed-8bb1-440aedb5d3bb}</UniqueIdentifier></Filter>
+    <Filter Include="src\main"><UniqueIdentifier>{f1ce0399-d53d-4203-8cba-6a3852e0f90b}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup><ClCompile Include="src\main\suite_utf.cpp"><Filter>src\main</Filter></ClCompile></ItemGroup>
+</Project>
