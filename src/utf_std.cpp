@@ -106,7 +106,7 @@ UTF_TYPE identifyUTF(const uint8_t* const buffer, const uint32_t size, uint32_t&
                 return UTF_TYPE::UTF16be;
             }
         }
-        const char* const string = reinterpret_cast<const char* const>(buffer);
+        const char* const string = reinterpret_cast<const char*>(buffer);
         if (size >= 2)
         {   //  possible UTF8, UTF16 or UTF32
             if (size >= 4)
@@ -247,7 +247,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
                 if ((byte & 0xc0u) == 0x80u)
                 {
                     value = ((value << 6) + (byte & 0x3fu));
-                    if ((value >= 0x00000080u) || (use_java && (value == 0x00000000u)))
+                    if ((value >= 0x00000080) || (use_java && (value == 0x00000000u)))
                     {
                         bytes = 2;
                         unicode = value;
@@ -269,7 +269,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
                     if ((byte & 0xc0u) == 0x80u)
                     {
                         value = ((value << 6) + (byte & 0x3fu));
-                        if ((value >= 0x00000800u) && ((value & 0xfffff800u) != 0x0000d800u))
+                        if ((value >= 0x00000800) && ((value & 0xfffff800u) != 0x0000d800u))
                         {
                             bytes = 3;
                             unicode = value;
@@ -296,7 +296,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
                         if ((byte & 0xc0u) == 0x80u)
                         {
                             value = ((value << 6) + (byte & 0x3fu));
-                            if ((value >= 0x00010000u) && (value <= 0x0010ffffu))
+                            if ((value >= 0x00010000) && (value <= 0x0010ffff))
                             {
                                 bytes = 4;
                                 unicode = value;
@@ -317,7 +317,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
     bytes = 0;
     if ((buffer != nullptr) && (size >= 1) && (static_cast<uint32_t>(unicode) <= 0x0010ffffu))
     {
-        if (unicode <= 0x0000007fu)
+        if (unicode <= 0x0000007f)
         {   //  1 byte (7 bits) or 2 bytes (11 bits for Java modified NULL)
             if (use_java && (unicode == 0))
             {
@@ -339,7 +339,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
                 }
             }
         }
-        else if (unicode <= 0x000007ffu)
+        else if (unicode <= 0x000007ff)
         {   //  2 bytes (11 bits)
             if (size >= 2)
             {   //  buffer overflow
@@ -349,7 +349,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
                 return true;
             }
         }
-        else if (unicode <= 0x0000ffffu)
+        else if (unicode <= 0x0000ffff)
         {   //  3 bytes (16 bits)
             if ((size >= 3) && ((unicode & 0xfffff800u) != 0x0000d800u))
             {
@@ -409,7 +409,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
     bytes = 0;
     if ((buffer != nullptr) && (size >= 2) && (static_cast<uint32_t>(unicode) <= 0x0010ffffu) && ((unicode & 0xfffff800u) != 0x0000d800u))
     {
-        if (unicode <= 0x0000ffffu)
+        if (unicode <= 0x0000ffff)
         {
             buffer[0] = static_cast<uint8_t>(unicode);
             buffer[1] = static_cast<uint8_t>(unicode >> 8);
@@ -464,7 +464,7 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept
     bytes = 0;
     if ((buffer != nullptr) && (size >= 2) && (static_cast<uint32_t>(unicode) <= 0x0010ffffu) && ((unicode & 0xfffff800u) != 0x0000d800u))
     {
-        if (unicode <= 0x0000ffffu)
+        if (unicode <= 0x0000ffff)
         {
             buffer[0] = static_cast<uint8_t>(unicode >> 8);
             buffer[1] = static_cast<uint8_t>(unicode);
@@ -1258,10 +1258,10 @@ class CUTF8 : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false); }
     virtual uint32_t            lenBOM() const noexcept { return 3; }
     virtual uint32_t            lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF8(buffer, size, unicode, bytes, false); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF8(buffer, size, unicode, bytes, false); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_BOM(buffer, size, bytes); }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_NULL(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF8(buffer, size, unicode, bytes, false); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF8(buffer, size, unicode, bytes, false); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_BOM(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_NULL(buffer, size, bytes); }
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return strsizeUTF8(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return strlenUTF8(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { return strlenUTF8(buffer, size); }
@@ -1274,10 +1274,10 @@ class CJUTF8 : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true); }
     virtual uint32_t            lenBOM() const noexcept { return 3; }
     virtual uint32_t            lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF8(buffer, size, unicode, bytes, true); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF8(buffer, size, unicode, bytes, true); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_BOM(buffer, size, bytes); }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_NULL(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF8(buffer, size, unicode, bytes, true); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF8(buffer, size, unicode, bytes, true); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_BOM(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_NULL(buffer, size, bytes); }
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return strsizeUTF8(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return strlenUTF8(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { return strlenUTF8(buffer, size); }
@@ -1290,10 +1290,10 @@ class CUTF16le : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenUTF16(unicode); }
     virtual uint32_t            lenBOM() const noexcept { return 2; }
     virtual uint32_t            lenNull() const noexcept { return 2; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF16le(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF16le(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16le_BOM(buffer, size, bytes); }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16_NULL(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF16le(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF16le(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16le_BOM(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16_NULL(buffer, size, bytes); }
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return strsizeUTF16(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return strlenUTF16le(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { return strlenUTF16le(buffer, size); }
@@ -1306,10 +1306,10 @@ class CUTF16be : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenUTF16(unicode); }
     virtual uint32_t            lenBOM() const noexcept { return 2; }
     virtual uint32_t            lenNull() const noexcept { return 2; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF16be(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF16be(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16be_BOM(buffer, size, bytes); }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16_NULL(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF16be(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF16be(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16be_BOM(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF16_NULL(buffer, size, bytes); }
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return strsizeUTF16(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return strlenUTF16be(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { return strlenUTF16be(buffer, size); }
@@ -1322,10 +1322,10 @@ class CUTF32le : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenUTF32(unicode); }
     virtual uint32_t            lenBOM() const noexcept { return 4; }
     virtual uint32_t            lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF32le(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF32le(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32le_BOM(buffer, size, bytes); }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32_NULL(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF32le(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF32le(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32le_BOM(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32_NULL(buffer, size, bytes); }
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return strsizeUTF32(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return strlenUTF32(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { (void)(buffer); return size >> 2; }
@@ -1338,10 +1338,10 @@ class CUTF32be : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenUTF32(unicode); }
     virtual uint32_t            lenBOM() const noexcept { return 4; }
     virtual uint32_t            lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF32be(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF32be(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32be_BOM(buffer, size, bytes); }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32_NULL(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getUTF32be(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setUTF32be(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32be_BOM(buffer, size, bytes); }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF32_NULL(buffer, size, bytes); }
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return strsizeUTF32(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return strlenUTF32(buffer); }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { (void)(buffer); return size >> 2; }
@@ -1354,27 +1354,27 @@ class CBYTE : public IUTF
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenBYTE(unicode, false); }
     virtual uint32_t            lenBOM() const noexcept { return 0; }
     virtual uint32_t            lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getBYTE(buffer, size, unicode, bytes, false); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setBYTE(buffer, size, unicode, bytes, false); }
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { (void)(buffer); (void)(size); bytes = 0; return true; }
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_NULL(buffer, size, bytes); }
-    virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return buffer ? static_cast<uint32_t>(::strlen(reinterpret_cast<const char* const>(buffer))) : 0; }
-    virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return buffer ? static_cast<uint32_t>(::strlen(reinterpret_cast<const char* const>(buffer))) : 0; }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getBYTE(buffer, size, unicode, bytes, false); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setBYTE(buffer, size, unicode, bytes, false); }
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { (void)(buffer); (void)(size); bytes = 0; return true; }
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept { return setUTF8_NULL(buffer, size, bytes); }
+    virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept { return buffer ? static_cast<uint32_t>(::strlen(reinterpret_cast<const char*>(buffer))) : 0; }
+    virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept { return buffer ? static_cast<uint32_t>(::strlen(reinterpret_cast<const char*>(buffer))) : 0; }
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept { (void)(buffer); return size; }
 };
 
 class CASCII : public CBYTE
 {
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return lenBYTE(unicode, true); }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getBYTE(buffer, size, unicode, bytes, true); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setBYTE(buffer, size, unicode, bytes, true); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return getBYTE(buffer, size, unicode, bytes, true); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return setBYTE(buffer, size, unicode, bytes, true); }
 };
 
 class CCP1252 : public CBYTE
 {
     virtual uint32_t            len(const unicode_t unicode) const noexcept { return std::lenCP1252(unicode); }
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return std::getCP1252(buffer, size, unicode, bytes); }
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return std::setCP1252(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept { return std::getCP1252(buffer, size, unicode, bytes); }
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept { return std::setCP1252(buffer, size, unicode, bytes); }
 };
 
 // ==== quick UTF abstracted handler request functions ====

@@ -157,7 +157,7 @@ bool unicodeToCP1252(const unicode_t unicode, uint8_t& cp1252, const CP1252Stric
 {
     if (static_cast<uint32_t>(unicode) <= 0x00ffu)
     {
-        if ((unicode <= 0x007fu) || (unicode >= 0x00a0u) || ((strictness == CP1252Strictness::WindowsCompatible) && isCP1252UndefinedC1(unicode)))
+        if ((unicode <= 0x007f) || (unicode >= 0x00a0) || ((strictness == CP1252Strictness::WindowsCompatible) && isCP1252UndefinedC1(unicode)))
         {
             cp1252 = static_cast<uint8_t>(unicode);
             return true;

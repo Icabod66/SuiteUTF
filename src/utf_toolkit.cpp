@@ -647,27 +647,27 @@ uint32_t lenUTF8(const unicode_t unicode, const bool use_cesu, const bool use_ja
     uint32_t bytes = 0;
     if (static_cast<uint32_t>(unicode) <= 0x7fffffffu)
     {   //  is an encodable unicode value
-        if (unicode <= 0x0000007fu)
+        if (unicode <= 0x0000007f)
         {   //  1 byte (7 bits)
             bytes = ((use_java && (unicode == 0x00000000u)) ? 2 : 1);
         }
-        else if (unicode <= 0x000007ffu)
+        else if (unicode <= 0x000007ff)
         {   //  2 bytes (11 bits)
             bytes = 2;
         }
-        else if (unicode <= 0x0000ffffu)
+        else if (unicode <= 0x0000ffff)
         {   //  3 bytes (16 bits)
             bytes = 3;
         }
-        else if (unicode <= 0x0010ffffu)
+        else if (unicode <= 0x0010ffff)
         {   //  4 bytes (standard UTF8: 21 bits) or 6 bytes (CESU UTF8: UTF16 surrogates encoded as 2 UTF8 characters)
             bytes = (use_cesu ? 6 : 4);
         }
-        else if (unicode <= 0x001fffffu)
+        else if (unicode <= 0x001fffff)
         {   //  4 bytes (21 bits)
             bytes = 4;
         }
-        else if (unicode <= 0x03ffffffu)
+        else if (unicode <= 0x03ffffff)
         {   //  5 bytes (26 bits)
             bytes = 5;
         }
@@ -684,7 +684,7 @@ uint32_t lenUTF16(const unicode_t unicode, const bool use_ucs2) noexcept
     uint32_t bytes = 0;
     if (static_cast<uint32_t>(unicode) <= 0x0010ffffu)
     {
-        if (unicode <= 0x0000ffffu)
+        if (unicode <= 0x0000ffff)
         {
             bytes = 2;
         }
@@ -701,7 +701,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
     uint32_t bytes = 0;
     if (static_cast<uint32_t>(unicode) <= uint32_t(use_ucs4 ? 0x7fffffffu : 0x0010ffffu))
     {
-        bytes = ((use_cesu && (unicode >= 0x00010000u) && (unicode <= 0x0010ffffu)) ? 8 : 4);
+        bytes = ((use_cesu && (unicode >= 0x00010000) && (unicode <= 0x0010ffff)) ? 8 : 4);
     }
     return bytes;
 }
@@ -712,26 +712,26 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
 {
     bytes = 0;
     cp_errors errors = get_errors(text);
-    if (unicode <= 0x00000000u)
+    if (unicode <= 0x00000000)
     {
         errors |= (unicode ? (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::InvalidPoint | cp_errors::bits::NotEnoughBits) : cp_errors::bits::DelimitString);
     }
     else if (static_cast<uint32_t>(unicode) > (use_ascii ? 0x0000007fu : 0x000000ffu))
     {
         errors |= (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::NotEnoughBits);
-        if (unicode >= 0x0000d800u)
+        if (unicode >= 0x0000d800)
         {
-            if (unicode > 0x0010ffffu)
+            if (unicode > 0x0010ffff)
             {
                 errors |= cp_errors::bits::ExtendedUCS4;
             }
-            else if (unicode >= 0x0000fdd0u)
+            else if (unicode >= 0x0000fdd0)
             {
-                if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+                if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
                 {
                     errors |= cp_errors::bits::NonCharacter;
                 }
-                if (unicode > 0x0000ffffu)
+                if (unicode > 0x0000ffff)
                 {
                     errors |= cp_errors::bits::Supplementary;
                 }
@@ -763,23 +763,23 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
 {
     bytes = 0;
     cp_errors errors = get_errors(text);
-    if (unicode <= 0x00000000u)
+    if (unicode <= 0x00000000)
     {
         errors |= (unicode ? (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::InvalidPoint | cp_errors::bits::NotEnoughBits) : (use_java ? cp_errors::bits::ModifiedUTF8 : cp_errors::bits::DelimitString));
     }
-    else if (unicode >= 0x0000d800u)
+    else if (unicode >= 0x0000d800)
     {
-        if (unicode > 0x0010ffffu)
+        if (unicode > 0x0010ffff)
         {
-            errors |= ((unicode > 0x001fffffu) ? (cp_errors::bits::ExtendedUTF8 | cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm) : (cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm));
+            errors |= ((unicode > 0x001fffff) ? (cp_errors::bits::ExtendedUTF8 | cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm) : (cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm));
         }
-        else if (unicode >= 0x0000fdd0u)
+        else if (unicode >= 0x0000fdd0)
         {
-            if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+            if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
             {
                 errors |= cp_errors::bits::NonCharacter;
             }
-            if (unicode > 0x0000ffffu)
+            if (unicode > 0x0000ffff)
             {
                 errors |= (use_cesu ? (cp_errors::bits::Supplementary | cp_errors::bits::SurrogatePair) : cp_errors::bits::Supplementary);
             }
@@ -793,7 +793,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
     {
         const uint32_t limit = (text.length - text.offset);
         uint8_t* const buffer = &text.buffer[text.offset];
-        if (unicode <= 0x0000007fu)
+        if (unicode <= 0x0000007f)
         {   //  1 byte (standard UTF8: 7 bits) or 2 bytes (modified NULL: 11 bits)
             if (errors.any(cp_errors::bits::ModifiedUTF8))
             {   //  2 bytes (modified NULL: 11 bits)
@@ -821,7 +821,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
                 }
             }
         }
-        else if (unicode <= 0x000007ffu)
+        else if (unicode <= 0x000007ff)
         {   //  2 bytes (11 bits)
             if (limit < 2)
             {   //  buffer overflow
@@ -834,7 +834,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
                 bytes = 2;
             }
         }
-        else if (unicode <= 0x0000ffffu)
+        else if (unicode <= 0x0000ffff)
         {   //  3 bytes (16 bits)
             if (limit < 3)
             {   //  buffer overflow
@@ -848,7 +848,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
                 bytes = 3;
             }
         }
-        else if ((unicode <= 0x0010ffffu) && errors.any(cp_errors::bits::SurrogatePair))
+        else if ((unicode <= 0x0010ffff) && errors.any(cp_errors::bits::SurrogatePair))
         {   //  6 bytes (CESU UTF8: UTF16 surrogates encoded as 2 UTF8 characters)
             if (limit < 6)
             {   //  buffer overflow
@@ -867,7 +867,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
                 bytes = 6;
             }
         }
-        else if (unicode <= 0x001fffffu)
+        else if (unicode <= 0x001fffff)
         {   //  4 bytes (21 bits)
             if (limit < 4)
             {   //  buffer overflow
@@ -882,7 +882,7 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
                 bytes = 4;
             }
         }
-        else if (unicode <= 0x03ffffffu)
+        else if (unicode <= 0x03ffffff)
         {   //  5 bytes (26 bits)
             if (limit < 5)
             {   //  buffer overflow
@@ -949,23 +949,23 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
     {
         errors |= (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::BadSizeUTF8);
     }
-    if (unicode < 0x00000000u)
+    if (unicode < 0x00000000)
     {
         errors |= (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::InvalidPoint | cp_errors::bits::NotEnoughBits);
     }
-    else if (unicode >= 0x0000d800u)
+    else if (unicode >= 0x0000d800)
     {
-        if (unicode > 0x0010ffffu)
+        if (unicode > 0x0010ffff)
         {
-            errors |= ((unicode > 0x001fffffu) ? (cp_errors::bits::ExtendedUTF8 | cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm) : (cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm));
+            errors |= ((unicode > 0x001fffff) ? (cp_errors::bits::ExtendedUTF8 | cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm) : (cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm));
         }
-        else if (unicode >= 0x0000fdd0u)
+        else if (unicode >= 0x0000fdd0)
         {
-            if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+            if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
             {
                 errors |= cp_errors::bits::NonCharacter;
             }
-            if (unicode > 0x0000ffffu)
+            if (unicode > 0x0000ffff)
             {
                 errors |= cp_errors::bits::Supplementary;
             }
@@ -1002,23 +1002,23 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
 {
     bytes = 0;
     cp_errors errors = get_errors(text, 1);
-    if (unicode <= 0x00000000u)
+    if (unicode <= 0x00000000)
     {
         errors |= (unicode ? (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::InvalidPoint | cp_errors::bits::NotEnoughBits) : cp_errors::bits::DelimitString);
     }
-    else if (unicode >= 0x0000d800u)
+    else if (unicode >= 0x0000d800)
     {
-        if (unicode > 0x0010ffffu)
+        if (unicode > 0x0010ffff)
         {
             errors |= (cp_errors::bits::Failed | cp_errors::bits::ExtendedUCS4 | cp_errors::bits::NotEnoughBits);
         }
-        else if (unicode >= 0x0000fdd0u)
+        else if (unicode >= 0x0000fdd0)
         {
-            if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+            if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
             {
                 errors |= cp_errors::bits::NonCharacter;
             }
-            if (unicode > 0x0000ffffu)
+            if (unicode > 0x0000ffff)
             {
                 errors |= (use_ucs2 ? (cp_errors::bits::Failed | cp_errors::bits::Supplementary | cp_errors::bits::NotEnoughBits) : (cp_errors::bits::Supplementary | cp_errors::bits::SurrogatePair));
             }
@@ -1088,23 +1088,23 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
 {
     bytes = 0;
     cp_errors errors = get_errors(text, 3);
-    if (unicode <= 0x00000000u)
+    if (unicode <= 0x00000000)
     {
         errors |= (unicode ? cp_errors::bits::InvalidPoint : cp_errors::bits::DelimitString);
     }
-    else if (unicode >= 0x0000d800u)
+    else if (unicode >= 0x0000d800)
     {
-        if (unicode > 0x0010ffffu)
+        if (unicode > 0x0010ffff)
         {
             errors |= (use_ucs4 ? cp_errors::bits::ExtendedUCS4 : (cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm));
         }
-        else if (unicode >= 0x0000fdd0u)
+        else if (unicode >= 0x0000fdd0)
         {
-            if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+            if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
             {
                 errors |= cp_errors::bits::NonCharacter;
             }
-            if (unicode > 0x0000ffffu)
+            if (unicode > 0x0000ffff)
             {
                 errors |= (use_cesu ? (cp_errors::bits::Supplementary | cp_errors::bits::SurrogatePair) : cp_errors::bits::Supplementary);
             }
@@ -1183,26 +1183,26 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
     bytes = 0;
     uint8_t cp1252 = 0;
     cp_errors errors = get_errors(text);
-    if (unicode <= 0x00000000u)
+    if (unicode <= 0x00000000)
     {
         errors |= (unicode ? (cp_errors::bits::Failed | cp_errors::bits::NotEncodable | cp_errors::bits::InvalidPoint | cp_errors::bits::NotEnoughBits) : cp_errors::bits::DelimitString);
     }
     else if (!unicodeToCP1252(unicode, cp1252, (strict ? CP1252Strictness::StrictUndefined : CP1252Strictness::WindowsCompatible)))
     {
         errors |= (cp_errors::bits::Failed | cp_errors::bits::NotEncodable);
-        if (unicode >= 0x0000d800u)
+        if (unicode >= 0x0000d800)
         {
-            if (unicode > 0x0010ffffu)
+            if (unicode > 0x0010ffff)
             {
                 errors |= cp_errors::bits::ExtendedUCS4;
             }
-            else if (unicode >= 0x0000fdd0u)
+            else if (unicode >= 0x0000fdd0)
             {
-                if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+                if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
                 {
                     errors |= cp_errors::bits::NonCharacter;
                 }
-                if (unicode > 0x0000ffffu)
+                if (unicode > 0x0000ffff)
                 {
                     errors |= cp_errors::bits::Supplementary;
                 }
@@ -1287,19 +1287,19 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
         errors |= internal::fetchUTF8(buffer, limit, unicode, bytes, (coalesce && !strict));
         if (errors.no_error())
         {   //  successfully read a UTF8 code-point
-            if (unicode >= 0x0000d800u)
+            if (unicode >= 0x0000d800)
             {
-                if (unicode > 0x0010ffffu)
+                if (unicode > 0x0010ffff)
                 {
                     errors |= cp_errors::bits::ExtendedUCS4;
                 }
-                else if (unicode >= 0x0000fdd0u)
+                else if (unicode >= 0x0000fdd0)
                 {
-                    if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+                    if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
                     {
                         errors |= cp_errors::bits::NonCharacter;
                     }
-                    if (unicode > 0x0000ffffu)
+                    if (unicode > 0x0000ffff)
                     {
                         errors |= cp_errors::bits::Supplementary;
                     }
@@ -1380,11 +1380,11 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
             uint8_t* const buffer = &text.buffer[text.offset];
             unicode = (le ? ((static_cast<unicode_t>(buffer[1]) << 8) + buffer[0]) : ((static_cast<unicode_t>(buffer[0]) << 8) + buffer[1]));
             bytes = 2;
-            if (unicode >= 0x0000d800u)
+            if (unicode >= 0x0000d800)
             {
-                if (unicode >= 0x0000fdd0u)
+                if (unicode >= 0x0000fdd0)
                 {
-                    if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+                    if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
                     {
                         errors |= cp_errors::bits::NonCharacter;
                     }
@@ -1451,23 +1451,23 @@ uint32_t lenUTF32(const unicode_t unicode, const bool use_cesu, const bool use_u
                 ((((((static_cast<unicode_t>(buffer[3]) << 8) + buffer[2]) << 8) + buffer[1]) << 8) + buffer[0]) :
                 ((((((static_cast<unicode_t>(buffer[0]) << 8) + buffer[1]) << 8) + buffer[2]) << 8) + buffer[3]));
             bytes = 4;
-            if (unicode <= 0x00000000u)
+            if (unicode <= 0x00000000)
             {
                 errors |= (unicode ? (cp_errors::bits::InvalidPoint | cp_errors::bits::IrregularForm) : cp_errors::bits::DelimitString);
             }
-            else if (unicode >= 0x0000d800u)
+            else if (unicode >= 0x0000d800)
             {
-                if (unicode > 0x0010ffffu)
+                if (unicode > 0x0010ffff)
                 {
                     errors |= (use_ucs4 ? cp_errors::bits::ExtendedUCS4 : (cp_errors::bits::ExtendedUCS4 | cp_errors::bits::IrregularForm));
                 }
-                else if (unicode >= 0x0000fdd0u)
+                else if (unicode >= 0x0000fdd0)
                 {
-                    if ((unicode <= 0x0000fdefu) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
+                    if ((unicode <= 0x0000fdef) || ((unicode & 0x0000fffeu) == 0x0000fffeu))
                     {
                         errors |= cp_errors::bits::NonCharacter;
                     }
-                    if (unicode > 0x0000ffffu)
+                    if (unicode > 0x0000ffff)
                     {
                         errors |= cp_errors::bits::Supplementary;
                     }
@@ -2180,11 +2180,11 @@ uint32_t stepCP1252(utf_text& text, const uint32_t count, const bool strict, con
 
 [[nodiscard]] bool overlongToIndexUTF8(const unicode_t unicode, const uint32_t bytes, uint32_t& index) noexcept
 {
-    if (unicode >= 0x00000000u)
+    if (unicode >= 0x00000000)
     {
         if (bytes == 2)
         {
-            if (unicode < 0x00000080u)
+            if (unicode < 0x00000080)
             {
                 index = static_cast<uint32_t>(unicode);
                 return true;
@@ -2192,7 +2192,7 @@ uint32_t stepCP1252(utf_text& text, const uint32_t count, const bool strict, con
         }
         else if (bytes == 3)
         {
-            if (unicode < 0x00000800u)
+            if (unicode < 0x00000800)
             {
                 index = static_cast<uint32_t>(unicode + 0x00000080u);
                 return true;
@@ -2200,7 +2200,7 @@ uint32_t stepCP1252(utf_text& text, const uint32_t count, const bool strict, con
         }
         else if (bytes == 4)
         {
-            if (unicode < 0x00010000u)
+            if (unicode < 0x00010000)
             {
                 index = static_cast<uint32_t>(unicode + 0x00000880u);
                 return true;
@@ -2208,7 +2208,7 @@ uint32_t stepCP1252(utf_text& text, const uint32_t count, const bool strict, con
         }
         else if (bytes == 5)
         {
-            if (unicode < 0x00200000u)
+            if (unicode < 0x00200000)
             {
                 index = static_cast<uint32_t>(unicode + 0x00010880u);
                 return true;
@@ -2216,7 +2216,7 @@ uint32_t stepCP1252(utf_text& text, const uint32_t count, const bool strict, con
         }
         else if (bytes == 6)
         {
-            if (unicode < 0x04000000u)
+            if (unicode < 0x04000000)
             {
                 index = static_cast<uint32_t>(unicode + 0x00210880u);
                 return true;
@@ -2415,10 +2415,10 @@ struct CUTF_UTF8 : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false, false); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, false, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, false, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, false, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, false, false, true); }
 };
@@ -2431,10 +2431,10 @@ struct CUTF_UTF8ns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false, false); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, false, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, false, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, false, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, false, false, false); }
 };
@@ -2447,10 +2447,10 @@ struct CUTF_UTF8st : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false, false); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, false, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, false, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, false, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, false, true, false); }
 };
@@ -2463,10 +2463,10 @@ struct CUTF_JUTF8 : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false, true); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, true, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, true, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, false, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, false, false, true); }
 };
@@ -2479,10 +2479,10 @@ struct CUTF_JUTF8ns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false, true); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, true, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, true, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, false, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, false, false, false); }
 };
@@ -2495,10 +2495,10 @@ struct CUTF_JUTF8st : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, false, true); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, true, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, false, true, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, false, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, false, true, false); }
 };
@@ -2511,10 +2511,10 @@ struct CUTF_CESU8 : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true, false); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, false, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, false, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, true, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, true, false, true); }
 };
@@ -2527,10 +2527,10 @@ struct CUTF_CESU8ns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true, false); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, false, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, false, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, true, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, true, false, false); }
 };
@@ -2543,10 +2543,10 @@ struct CUTF_CESU8st : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true, false); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, false, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, false, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, true, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, true, true, false); }
 };
@@ -2559,10 +2559,10 @@ struct CUTF_JCESU8 : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true, true); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, true, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, true, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, true, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, true, false, true); }
 };
@@ -2575,10 +2575,10 @@ struct CUTF_JCESU8ns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true, true); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, true, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, true, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, true, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, true, false, false); }
 };
@@ -2591,10 +2591,10 @@ struct CUTF_JCESU8st : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF8(unicode, true, true); }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, true, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF8(text, unicode, bytes, true, true, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF8(text, unicode, bytes, true, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF8(text, count, true, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF8(text, count, true, true, false); }
 };
@@ -2607,10 +2607,10 @@ struct CUTF_UTF16le : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF16(unicode, false); }
     virtual uint32_t                lenBOM() const noexcept { return 2; }
     virtual uint32_t                lenNull() const noexcept { return 2; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, true); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, true); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF16(text, count, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF16(text, count, true, false); }
 };
@@ -2623,10 +2623,10 @@ struct CUTF_UTF16be : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF16(unicode, false); }
     virtual uint32_t                lenBOM() const noexcept { return 2; }
     virtual uint32_t                lenNull() const noexcept { return 2; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, false); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, false); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF16(text, count, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF16(text, count, false, false); }
 };
@@ -2639,10 +2639,10 @@ struct CUTF_UCS2le : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF16(unicode, true); }
     virtual uint32_t                lenBOM() const noexcept { return 2; }
     virtual uint32_t                lenNull() const noexcept { return 2; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, true, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, true, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, true); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, true, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, true, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, true); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF16(text, count, true, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF16(text, count, true, true); }
 };
@@ -2655,10 +2655,10 @@ struct CUTF_UCS2be : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF16(unicode, true); }
     virtual uint32_t                lenBOM() const noexcept { return 2; }
     virtual uint32_t                lenNull() const noexcept { return 2; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, false); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF16(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF16(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_BOM(text, bytes, false); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF16_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF16(text, count, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF16(text, count, false, true); }
 };
@@ -2671,10 +2671,10 @@ struct CUTF_UTF32le : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, false, false); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, false, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, false, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, true, false); }
 };
@@ -2687,10 +2687,10 @@ struct CUTF_UTF32be : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, false, false); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, false, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, false, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, false, false); }
 };
@@ -2703,10 +2703,10 @@ struct CUTF_UCS4le : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, false, true); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, false, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, false, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, true, false); }
 };
@@ -2719,10 +2719,10 @@ struct CUTF_UCS4be : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, false, true); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, false, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, false, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, false, false); }
 };
@@ -2735,10 +2735,10 @@ struct CUTF_CESU32le : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, true, false); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, true, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, true, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, true, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, true, true); }
 };
@@ -2751,10 +2751,10 @@ struct CUTF_CESU32be : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, true, false); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, true, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, true, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, false, true); }
 };
@@ -2767,10 +2767,10 @@ struct CUTF_CESU4le : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, true, true); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, true, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, true, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, true, true, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, true, true, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, true); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, true, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, true, true); }
 };
@@ -2783,10 +2783,10 @@ struct CUTF_CESU4be : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return lenUTF32(unicode, true, true); }
     virtual uint32_t                lenBOM() const noexcept { return 4; }
     virtual uint32_t                lenNull() const noexcept { return 4; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, true, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, true, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeUTF32(text, unicode, bytes, false, true, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeUTF32(text, unicode, bytes, false, true, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_BOM(text, bytes, false); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF32_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backUTF32(text, count, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepUTF32(text, count, false, true); }
 };
@@ -2799,10 +2799,10 @@ struct CUTF_BYTE : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x000000ffu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backBYTE(text, count, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepBYTE(text, count, false, true); }
 };
@@ -2815,10 +2815,10 @@ struct CUTF_BYTEns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x000000ffu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backBYTE(text, count, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepBYTE(text, count, false, false); }
 };
@@ -2831,10 +2831,10 @@ struct CUTF_ASCII : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x0000007fu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, true, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, true, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backBYTE(text, count, true, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepBYTE(text, count, true, true); }
 };
@@ -2847,10 +2847,10 @@ struct CUTF_ASCIIns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x0000007fu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 3; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeBYTE(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeBYTE(text, unicode, bytes, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_BOM(text, bytes); }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backBYTE(text, count, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepBYTE(text, count, true, false); }
 };
@@ -2863,10 +2863,10 @@ struct CUTF_CP1252 : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x0000007fu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 0; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeCP1252(text, unicode, bytes, false, true); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeCP1252(text, unicode, bytes, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { (void)text; bytes = 0; return cp_errors::bits::None; }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeCP1252(text, unicode, bytes, false, true); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeCP1252(text, unicode, bytes, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { (void)text; bytes = 0; return cp_errors::bits::None; }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backCP1252(text, count, false, true); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepCP1252(text, count, false, true); }
 };
@@ -2879,10 +2879,10 @@ struct CUTF_CP1252ns : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x0000007fu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 0; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeCP1252(text, unicode, bytes, false, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeCP1252(text, unicode, bytes, false); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { (void)text; bytes = 0; return cp_errors::bits::None; }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeCP1252(text, unicode, bytes, false, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeCP1252(text, unicode, bytes, false); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { (void)text; bytes = 0; return cp_errors::bits::None; }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backCP1252(text, count, false, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepCP1252(text, count, false, false); }
 };
@@ -2895,10 +2895,10 @@ struct CUTF_CP1252st : public IUTFTK
     virtual uint32_t                len(const unicode_t unicode) const noexcept { return (static_cast<unicode_t>(unicode & 0x0000007fu) == unicode) ? 1 : 0; }
     virtual uint32_t                lenBOM() const noexcept { return 0; }
     virtual uint32_t                lenNull() const noexcept { return 1; }
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeCP1252(text, unicode, bytes, true, false); }
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeCP1252(text, unicode, bytes, true); }
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { (void)text; bytes = 0; return cp_errors::bits::None; }
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept { return decodeCP1252(text, unicode, bytes, true, false); }
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept { return encodeCP1252(text, unicode, bytes, true); }
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept { (void)text; bytes = 0; return cp_errors::bits::None; }
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept { return encodeUTF8_NULL(text, bytes); }
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept { return backCP1252(text, count, true, false); }
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept { return stepCP1252(text, count, true, false); }
 };

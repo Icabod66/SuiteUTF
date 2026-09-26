@@ -24,8 +24,8 @@
 
 // ==== 16-bit crc to 32-bit ascii hash transformation functions ====
 bool is_valid_ascii_hash(const uint32_t ascii_hash) noexcept;
-inline constexpr uint16_t ascii_hash_to_crc(const uint32_t ascii_hash) noexcept;
-inline constexpr uint32_t crc_to_ascii_hash(const uint16_t crc) noexcept;
+constexpr uint16_t ascii_hash_to_crc(const uint32_t ascii_hash) noexcept;
+constexpr uint32_t crc_to_ascii_hash(const uint16_t crc) noexcept;
 
 // ==== 16-bit crc ccitt false crc calculation ====
 //  Use the null-terminated helpers for conventional strings and the
@@ -36,10 +36,10 @@ inline uint32_t crc_ccitt_false_ascii_hash(const uint8_t* const text) noexcept {
 inline uint32_t crc_ccitt_false_ascii_hash(const uint8_t* const text, const uint32_t length) noexcept { return crc_to_ascii_hash(crc_ccitt_false(text, length)); };
 
 // ==== inline pointer type conversion helper functions ====
-inline uint16_t crc_ccitt_false(const char* const text) noexcept { return crc_ccitt_false(reinterpret_cast<const uint8_t* const>(text)); };
-inline uint16_t crc_ccitt_false(const char* const text, const uint32_t length) noexcept { return crc_ccitt_false(reinterpret_cast<const uint8_t* const>(text), length); };
-inline uint32_t crc_ccitt_false_ascii_hash(const char* const text) noexcept { return crc_ccitt_false_ascii_hash(reinterpret_cast<const uint8_t* const>(text)); };
-inline uint32_t crc_ccitt_false_ascii_hash(const char* const text, const uint32_t length) noexcept { return crc_ccitt_false_ascii_hash(reinterpret_cast<const uint8_t* const>(text), length); };
+inline uint16_t crc_ccitt_false(const char* const text) noexcept { return crc_ccitt_false(reinterpret_cast<const uint8_t*>(text)); };
+inline uint16_t crc_ccitt_false(const char* const text, const uint32_t length) noexcept { return crc_ccitt_false(reinterpret_cast<const uint8_t*>(text), length); };
+inline uint32_t crc_ccitt_false_ascii_hash(const char* const text) noexcept { return crc_ccitt_false_ascii_hash(reinterpret_cast<const uint8_t*>(text)); };
+inline uint32_t crc_ccitt_false_ascii_hash(const char* const text, const uint32_t length) noexcept { return crc_ccitt_false_ascii_hash(reinterpret_cast<const uint8_t*>(text), length); };
 
 // ==== test functions ====
 bool test_ascii_hash();

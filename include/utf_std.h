@@ -118,10 +118,10 @@ uint32_t lenCP1252(const unicode_t unicode) noexcept;
 [[nodiscard]] bool setCP1252(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) noexcept;
 
 // ==== quick UTF encoded code-point length functions ====
-inline constexpr uint32_t lenBYTE(const unicode_t unicode, const bool use_ascii = false) noexcept;
-inline constexpr uint32_t lenUTF8(const unicode_t unicode, const bool use_java = false) noexcept;
-inline constexpr uint32_t lenUTF16(const unicode_t unicode) noexcept;
-inline constexpr uint32_t lenUTF32(const unicode_t unicode) noexcept;
+constexpr uint32_t lenBYTE(const unicode_t unicode, const bool use_ascii = false) noexcept;
+constexpr uint32_t lenUTF8(const unicode_t unicode, const bool use_java = false) noexcept;
+constexpr uint32_t lenUTF16(const unicode_t unicode) noexcept;
+constexpr uint32_t lenUTF32(const unicode_t unicode) noexcept;
 
 // ==== quick UTF encode and decode functions ====
 [[nodiscard]] bool getBYTE(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes, const bool use_ascii = false) noexcept;
@@ -138,14 +138,14 @@ inline constexpr uint32_t lenUTF32(const unicode_t unicode) noexcept;
 [[nodiscard]] bool setUTF32be(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) noexcept;
 
 // ==== quick UTF byte order marker and NULL code-point encode functions ====
-inline [[nodiscard]] bool setUTF8_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF16le_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF16be_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF32le_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF32be_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF8_NULL(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF16_NULL(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
-inline [[nodiscard]] bool setUTF32_NULL(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF8_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF16le_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF16be_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF32le_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF32be_BOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF8_NULL(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF16_NULL(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
+[[nodiscard]] inline bool setUTF32_NULL(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) noexcept;
 
 // ==== quick UTF null (0) terminated string byte length functions ====
 uint32_t strsizeUTF8(const uint8_t* const buffer) noexcept;
@@ -187,8 +187,8 @@ uint32_t strsizeUTF16fromUTF32be(const uint8_t* const buffer, const uint32_t siz
 struct IUTF
 {
 protected:
-    inline                      IUTF() {};
-    inline                      ~IUTF() {};
+                                IUTF() {};
+                                ~IUTF() {};
 public:
     static const IUTF&          getHandler(const UTF_TYPE utfType = UTF_TYPE::OTHER) noexcept;
     static const IUTF&          getHandler(const UTF_OTHER_TYPE utfOtherType) noexcept;
@@ -197,10 +197,10 @@ public:
     virtual uint32_t            len(const unicode_t unicode) const noexcept = 0;
     virtual uint32_t            lenBOM() const noexcept = 0;
     virtual uint32_t            lenNull() const noexcept = 0;
-    virtual [[nodiscard]] bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept = 0;
-    virtual [[nodiscard]] bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept = 0;
-    virtual [[nodiscard]] bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept = 0;
-    virtual [[nodiscard]] bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual bool  get(const uint8_t* const buffer, const uint32_t size, unicode_t& unicode, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual bool  set(uint8_t* const buffer, const uint32_t size, const unicode_t unicode, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual bool  setBOM(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual bool  setNull(uint8_t* const buffer, const uint32_t size, uint32_t& bytes) const noexcept = 0;
     virtual uint32_t            strsize(const uint8_t* const buffer) const noexcept = 0;
     virtual uint32_t            strlen(const uint8_t* const buffer) const noexcept = 0;
     virtual uint32_t            strlen(const uint8_t* const buffer, const uint32_t size) const noexcept = 0;
@@ -233,15 +233,15 @@ constexpr uint32_t lenUTF8(const unicode_t unicode, const bool use_java) noexcep
     uint32_t bytes = 0;
     if (static_cast<uint32_t>(unicode) <= 0x0010ffffu)
     {   //  is an encodable unicode value
-        if (unicode <= 0x0000007fu)
+        if (unicode <= 0x0000007f)
         {   //  1 byte (7 bits)
             bytes = ((use_java && (unicode == 0x00000000u)) ? 2 : 1);
         }
-        else if (unicode <= 0x000007ffu)
+        else if (unicode <= 0x000007ff)
         {   //  2 bytes (11 bits)
             bytes = 2;
         }
-        else if (unicode <= 0x0000ffffu)
+        else if (unicode <= 0x0000ffff)
         {   //  3 bytes (16 bits)
             if ((unicode & 0xfffff800u) != 0x0000d800u)
             {

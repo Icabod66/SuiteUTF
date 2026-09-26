@@ -29,31 +29,31 @@ namespace utf
 {
 
 // ==== UTF8 inline helper function declarations ====
-inline constexpr uint32_t bitCountUTF8(const uint32_t bytes) noexcept;
-inline constexpr unicode_t maxUnicodeUTF8(const uint32_t bytes) noexcept;
-inline constexpr uint32_t leadToBytesUTF8(const uint8_t lead) noexcept;
+constexpr uint32_t bitCountUTF8(const uint32_t bytes) noexcept;
+constexpr unicode_t maxUnicodeUTF8(const uint32_t bytes) noexcept;
+constexpr uint32_t leadToBytesUTF8(const uint8_t lead) noexcept;
 
 // ==== UTF8 byte identification inline functions ====
-inline constexpr bool isLeadUTF8(const uint8_t byte) noexcept { return ((byte & 0xc0u) != 0x80u) && (byte < 0xfeu); };
-inline constexpr bool isContUTF8(const uint8_t byte) noexcept { return (byte & 0xc0u) == 0x80u; };
-inline constexpr bool isBadUTF8(const uint8_t byte)  noexcept { return byte >= 0xfeu; };
+constexpr bool isLeadUTF8(const uint8_t byte) noexcept { return ((byte & 0xc0u) != 0x80u) && (byte < 0xfeu); };
+constexpr bool isContUTF8(const uint8_t byte) noexcept { return (byte & 0xc0u) == 0x80u; };
+constexpr bool isBadUTF8(const uint8_t byte)  noexcept { return byte >= 0xfeu; };
 
 // ==== GB18030 byte identification inline functions ====
-inline constexpr bool isIllegalGB18030_Byte(const uint8_t byte)  noexcept { return byte == 0xffu; };
-inline constexpr bool possibleGB18030_Byte0(const uint8_t byte0) noexcept { return byte0 <= 0xfeu; };
-inline constexpr bool possibleGB18030_Byte1(const uint8_t byte1) noexcept { return ((byte1 >= 0x40u) && (byte1 <= 0xfeu) && (byte1 != 0x7fu)) || ((byte1 >= 0x30u) && (byte1 <= 0x39u)); };
-inline constexpr bool possibleGB18030_Byte2(const uint8_t byte2) noexcept { return (byte2 >= 0x81u) && (byte2 <= 0xfeu); };
-inline constexpr bool possibleGB18030_Byte3(const uint8_t byte3) noexcept { return (byte3 >= 0x30u) && (byte3 <= 0x39u); };
-inline constexpr bool possibleGB18030_1Byte(const uint8_t byte0) noexcept { return byte0 <= 0x80u; };
-inline constexpr bool possibleGB18030_2Byte(const uint8_t byte1) noexcept { return (byte1 >= 0x40u) && (byte1 <= 0xfeu) && (byte1 != 0x7fu); };
-inline constexpr bool possibleGB18030_4Byte(const uint8_t byte1) noexcept { return (byte1 >= 0x30u) && (byte1 <= 0x39u); };
+constexpr bool isIllegalGB18030_Byte(const uint8_t byte)  noexcept { return byte == 0xffu; };
+constexpr bool possibleGB18030_Byte0(const uint8_t byte0) noexcept { return byte0 <= 0xfeu; };
+constexpr bool possibleGB18030_Byte1(const uint8_t byte1) noexcept { return ((byte1 >= 0x40u) && (byte1 <= 0xfeu) && (byte1 != 0x7fu)) || ((byte1 >= 0x30u) && (byte1 <= 0x39u)); };
+constexpr bool possibleGB18030_Byte2(const uint8_t byte2) noexcept { return (byte2 >= 0x81u) && (byte2 <= 0xfeu); };
+constexpr bool possibleGB18030_Byte3(const uint8_t byte3) noexcept { return (byte3 >= 0x30u) && (byte3 <= 0x39u); };
+constexpr bool possibleGB18030_1Byte(const uint8_t byte0) noexcept { return byte0 <= 0x80u; };
+constexpr bool possibleGB18030_2Byte(const uint8_t byte1) noexcept { return (byte1 >= 0x40u) && (byte1 <= 0xfeu) && (byte1 != 0x7fu); };
+constexpr bool possibleGB18030_4Byte(const uint8_t byte1) noexcept { return (byte1 >= 0x30u) && (byte1 <= 0x39u); };
 
 // ==== Shift encoding (SJIS and similar) byte identification inline functions ====
-inline constexpr bool isIllegalSHIFT_Byte(const uint8_t byte)  noexcept { return byte >= 0xfdu; };
-inline constexpr bool possibleSHIFT_Byte0(const uint8_t byte0) noexcept { return (byte0 <= 0xfcu) && (byte0 != 0x80u) && (byte0 != 0xa0u); };
-inline constexpr bool possibleSHIFT_Byte1(const uint8_t byte1) noexcept { return (byte1 >= 0x40u) && (byte1 <= 0xfcu) && (byte1 != 0x7fu); };
-inline constexpr bool possibleSHIFT_1Byte(const uint8_t byte0) noexcept { return (byte0 <= 0x7fu) || ((byte0 >= 0xa1u) && (byte0 <= 0xdfu)); };
-inline constexpr bool possibleSHIFT_2Byte(const uint8_t byte0) noexcept { return (byte0 >= 0x81u) && (byte0 <= 0xfcu) && ((byte0 <= 0x9fu) || (byte0 >= 0xe0u)); };
+constexpr bool isIllegalSHIFT_Byte(const uint8_t byte)  noexcept { return byte >= 0xfdu; };
+constexpr bool possibleSHIFT_Byte0(const uint8_t byte0) noexcept { return (byte0 <= 0xfcu) && (byte0 != 0x80u) && (byte0 != 0xa0u); };
+constexpr bool possibleSHIFT_Byte1(const uint8_t byte1) noexcept { return (byte1 >= 0x40u) && (byte1 <= 0xfcu) && (byte1 != 0x7fu); };
+constexpr bool possibleSHIFT_1Byte(const uint8_t byte0) noexcept { return (byte0 <= 0x7fu) || ((byte0 >= 0xa1u) && (byte0 <= 0xdfu)); };
+constexpr bool possibleSHIFT_2Byte(const uint8_t byte0) noexcept { return (byte0 >= 0x81u) && (byte0 <= 0xfcu) && ((byte0 <= 0x9fu) || (byte0 >= 0xe0u)); };
 
 // ==== inline function bodies ====
 

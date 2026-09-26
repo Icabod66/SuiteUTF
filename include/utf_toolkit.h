@@ -223,16 +223,16 @@ public:
     constexpr cp_errors(const bits bit) noexcept : state(static_cast<underlying_type>(bit)) {}
     explicit constexpr cp_errors(const underlying_type raw) noexcept : state(raw) {}
     constexpr underlying_type raw() const noexcept { return state; }
-    constexpr [[nodiscard]] bool all(const cp_errors mask) const noexcept { return (state & mask.state) == mask.state; }
-    constexpr [[nodiscard]] bool all(const underlying_type mask) const noexcept { return (state & mask) == mask; }
-    constexpr [[nodiscard]] bool any() const noexcept { return (state & NonReservedMask) != 0; }
-    constexpr [[nodiscard]] bool any(const bits bit) const noexcept { return (state & u(bit)) != 0; }
-    constexpr [[nodiscard]] bool any(const cp_errors mask) const noexcept { return (state & mask.state) != 0; }
-    constexpr [[nodiscard]] bool any(const underlying_type mask) const noexcept { return (state & mask) != 0; }
-    constexpr [[nodiscard]] bool none() const noexcept { return !any(); }
-    constexpr [[nodiscard]] bool none(const bits bit) const noexcept { return !any(bit); }
-    constexpr [[nodiscard]] bool none(const cp_errors mask) const noexcept { return !any(mask); }
-    constexpr [[nodiscard]] bool none(const underlying_type mask) const noexcept { return !any(mask); }
+    [[nodiscard]] constexpr bool all(const cp_errors mask) const noexcept { return (state & mask.state) == mask.state; }
+    [[nodiscard]] constexpr bool all(const underlying_type mask) const noexcept { return (state & mask) == mask; }
+    [[nodiscard]] constexpr bool any() const noexcept { return (state & NonReservedMask) != 0; }
+    [[nodiscard]] constexpr bool any(const bits bit) const noexcept { return (state & u(bit)) != 0; }
+    [[nodiscard]] constexpr bool any(const cp_errors mask) const noexcept { return (state & mask.state) != 0; }
+    [[nodiscard]] constexpr bool any(const underlying_type mask) const noexcept { return (state & mask) != 0; }
+    [[nodiscard]] constexpr bool none() const noexcept { return !any(); }
+    [[nodiscard]] constexpr bool none(const bits bit) const noexcept { return !any(bit); }
+    [[nodiscard]] constexpr bool none(const cp_errors mask) const noexcept { return !any(mask); }
+    [[nodiscard]] constexpr bool none(const underlying_type mask) const noexcept { return !any(mask); }
     constexpr void clear() noexcept { state = 0; }
     constexpr void clear(const bits bit) noexcept { state &= ~u(bit); }
     constexpr void clear(const cp_errors mask) noexcept { state &= ~mask.state; }
@@ -240,13 +240,13 @@ public:
     constexpr void reset() noexcept { clear(); }
     constexpr bool operator==(const cp_errors rhs) const noexcept { return state == rhs.state; }
     constexpr bool operator!=(const cp_errors rhs) const noexcept { return state != rhs.state; }
-    constexpr [[nodiscard]] cp_errors operator~() const noexcept { return cp_errors(~state); }
-    constexpr [[nodiscard]] cp_errors operator&(const bits rhs) const noexcept { return cp_errors(state & u(rhs)); }
-    constexpr [[nodiscard]] cp_errors operator|(const bits rhs) const noexcept { return cp_errors(state | u(rhs)); }
-    constexpr [[nodiscard]] cp_errors operator^(const bits rhs) const noexcept { return cp_errors(state ^ u(rhs)); }
-    constexpr [[nodiscard]] cp_errors operator&(const cp_errors rhs) const noexcept { return cp_errors(state & rhs.state); }
-    constexpr [[nodiscard]] cp_errors operator|(const cp_errors rhs) const noexcept { return cp_errors(state | rhs.state); }
-    constexpr [[nodiscard]] cp_errors operator^(const cp_errors rhs) const noexcept { return cp_errors(state ^ rhs.state); }
+    [[nodiscard]] constexpr cp_errors operator~() const noexcept { return cp_errors(~state); }
+    [[nodiscard]] constexpr cp_errors operator&(const bits rhs) const noexcept { return cp_errors(state & u(rhs)); }
+    [[nodiscard]] constexpr cp_errors operator|(const bits rhs) const noexcept { return cp_errors(state | u(rhs)); }
+    [[nodiscard]] constexpr cp_errors operator^(const bits rhs) const noexcept { return cp_errors(state ^ u(rhs)); }
+    [[nodiscard]] constexpr cp_errors operator&(const cp_errors rhs) const noexcept { return cp_errors(state & rhs.state); }
+    [[nodiscard]] constexpr cp_errors operator|(const cp_errors rhs) const noexcept { return cp_errors(state | rhs.state); }
+    [[nodiscard]] constexpr cp_errors operator^(const cp_errors rhs) const noexcept { return cp_errors(state ^ rhs.state); }
     constexpr cp_errors& operator&=(const bits rhs) noexcept { state &= u(rhs); return *this; }
     constexpr cp_errors& operator|=(const bits rhs) noexcept { state |= u(rhs); return *this; }
     constexpr cp_errors& operator^=(const bits rhs) noexcept { state ^= u(rhs); return *this; }
@@ -254,12 +254,12 @@ public:
     constexpr cp_errors& operator|=(const cp_errors rhs) noexcept { state |= rhs.state; return *this; }
     constexpr cp_errors& operator^=(const cp_errors rhs) noexcept { state ^= rhs.state; return *this; }
     explicit constexpr operator bool() const noexcept { return any(); }
-    constexpr [[nodiscard]] bool failed() const noexcept { return any(bits::Failed); }
-    constexpr [[nodiscard]] bool error() const noexcept { return any(ErrorsMask); }
-    constexpr [[nodiscard]] bool no_error() const noexcept { return !error(); }
-    constexpr [[nodiscard]] bool buffer_error() const noexcept { return any(BufferErrorsMask); }
-    constexpr [[nodiscard]] bool is_rune_value() const noexcept { return none(ScalarDisallowedMask); }
-    constexpr [[nodiscard]] bool is_strict_rune(const UTF_SUB_TYPE utfSubType) const noexcept
+    [[nodiscard]] constexpr bool failed() const noexcept { return any(bits::Failed); }
+    [[nodiscard]] constexpr bool error() const noexcept { return any(ErrorsMask); }
+    [[nodiscard]] constexpr bool no_error() const noexcept { return !error(); }
+    [[nodiscard]] constexpr bool buffer_error() const noexcept { return any(BufferErrorsMask); }
+    [[nodiscard]] constexpr bool is_rune_value() const noexcept { return none(ScalarDisallowedMask); }
+    [[nodiscard]] constexpr bool is_strict_rune(const UTF_SUB_TYPE utfSubType) const noexcept
     {
         switch (utfSubType) {
             case UTF_SUB_TYPE::UTF8ns:
@@ -274,11 +274,11 @@ public:
                 return false;
         }
     }
-    constexpr [[nodiscard]] bool use_replacement_character() const noexcept { return any(UseReplacementCharacterMask); }
-    constexpr [[nodiscard]] cp_errors errors_only() const noexcept { return cp_errors(state & ErrorsMask); }
-    constexpr [[nodiscard]] cp_errors warnings_only() const noexcept { return cp_errors(state & WarningsMask); }
-    constexpr [[nodiscard]] cp_errors buffer_errors_only() const noexcept { return cp_errors(state & BufferErrorsMask); }
-    constexpr [[nodiscard]] uint32_t get_byte_index() const noexcept { return uint32_t(state & ByteIndexMask); }
+    [[nodiscard]] constexpr bool use_replacement_character() const noexcept { return any(UseReplacementCharacterMask); }
+    [[nodiscard]] constexpr cp_errors errors_only() const noexcept { return cp_errors(state & ErrorsMask); }
+    [[nodiscard]] constexpr cp_errors warnings_only() const noexcept { return cp_errors(state & WarningsMask); }
+    [[nodiscard]] constexpr cp_errors buffer_errors_only() const noexcept { return cp_errors(state & BufferErrorsMask); }
+    [[nodiscard]] constexpr uint32_t get_byte_index() const noexcept { return uint32_t(state & ByteIndexMask); }
     constexpr void set_byte_index(const uint32_t index) noexcept { state = (state & ~ByteIndexMask) | (index & ByteIndexMask); }
 private:
 #define U(b) static_cast<underlying_type>(b)
@@ -307,19 +307,19 @@ private:
 #undef U
 };
 
-constexpr [[nodiscard]] cp_errors operator|(const cp_errors::bits lhs, const cp_errors rhs) noexcept
+[[nodiscard]] constexpr cp_errors operator|(const cp_errors::bits lhs, const cp_errors rhs) noexcept
 {
     return cp_errors(static_cast<cp_errors::underlying_type>(lhs) | rhs.raw());
 }
 
-constexpr [[nodiscard]] cp_errors operator|(const cp_errors::bits lhs, const cp_errors::bits rhs) noexcept
+[[nodiscard]] constexpr cp_errors operator|(const cp_errors::bits lhs, const cp_errors::bits rhs) noexcept
 {
     return cp_errors(static_cast<cp_errors::underlying_type>(lhs) | static_cast<cp_errors::underlying_type>(rhs));
 }
 
 // ==== stand alone utf_text structure error checking ====
-inline [[nodiscard]] cp_errors get_errors(const utf_text& text) noexcept;
-inline [[nodiscard]] cp_errors get_errors(const utf_text& text, const uint32_t alignment_mask) noexcept;
+[[nodiscard]] inline cp_errors get_errors(const utf_text& text) noexcept;
+[[nodiscard]] inline cp_errors get_errors(const utf_text& text, const uint32_t alignment_mask) noexcept;
 
 // ==== code-point encoded length functions ====
 uint32_t lenUTF8(const unicode_t unicode, const bool use_cesu = false, const bool use_java = false) noexcept;
@@ -376,7 +376,7 @@ uint32_t stepCP1252(utf_text& text, const uint32_t count, const bool strict = fa
 //      At the time of writing, other than the Java style NULL, no standards exist for using overlong encoding
 //      and strict decoders should ignore all overlong forms or treat them as decode failures.
 
-inline constexpr [[nodiscard]] bool isOverlongUTF8(const unicode_t unicode, const uint32_t bytes) noexcept;
+[[nodiscard]] constexpr bool isOverlongUTF8(const unicode_t unicode, const uint32_t bytes) noexcept;
 [[nodiscard]] bool overlongToIndexUTF8(const unicode_t unicode, const uint32_t bytes, uint32_t& index) noexcept;
 [[nodiscard]] bool indexToOverlongUTF8(const uint32_t index, unicode_t& unicode, uint32_t& bytes) noexcept;
 
@@ -384,8 +384,8 @@ inline constexpr [[nodiscard]] bool isOverlongUTF8(const unicode_t unicode, cons
 struct IUTFTK
 {
 protected:
-    inline                          IUTFTK() {};
-    inline                          ~IUTFTK() {};
+                                    IUTFTK() {};
+                                    ~IUTFTK() {};
 public:
     static const IUTFTK&            getHandler(const UTF_TYPE utfType = UTF_TYPE::OTHER) noexcept;
     static const IUTFTK&            getHandler(const UTF_SUB_TYPE utfSubType) noexcept;
@@ -396,10 +396,10 @@ public:
     virtual uint32_t                len(const unicode_t unicode) const noexcept = 0;
     virtual uint32_t                lenBOM() const noexcept = 0;
     virtual uint32_t                lenNull() const noexcept = 0;
-    virtual [[nodiscard]] cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept = 0;
-    virtual [[nodiscard]] cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept = 0;
-    virtual [[nodiscard]] cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept = 0;
-    virtual [[nodiscard]] cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual cp_errors get(const utf_text& text, unicode_t& unicode, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual cp_errors set(utf_text& text, const unicode_t unicode, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual cp_errors setBOM(utf_text& text, uint32_t& bytes) const noexcept = 0;
+    [[nodiscard]] virtual cp_errors setNull(utf_text& text, uint32_t& bytes) const noexcept = 0;
     virtual uint32_t                back(utf_text& text, const uint32_t count) const noexcept = 0;
     virtual uint32_t                step(utf_text& text, const uint32_t count) const noexcept = 0;
     //  non-virtual utility functions:
@@ -445,7 +445,7 @@ public:
     return errors;
 }
 
-constexpr [[nodiscard]] bool isOverlongUTF8(const unicode_t unicode, const uint32_t bytes) noexcept
+[[nodiscard]] constexpr bool isOverlongUTF8(const unicode_t unicode, const uint32_t bytes) noexcept
 {
     bool overlong = false;
     if (static_cast<uint32_t>(bytes - 2) < 5)
